@@ -4434,6 +4434,25 @@ const definitions: Definition[] = [
         onEvent: (type, data, device, options) => tuya.onEventMeasurementPoll(type, data, device, options, true, false),
     },
     {
+        fingerprint: [{modelID: 'TS0011', manufacturerName: '_TZ3000_gzvniqjb'}],
+        model: 'TO-Q-SY1-ZT',
+        description: 'Din smart relay (without power monitoring)',
+        vendor: 'TuYa',
+        fromZigbee: [fz.on_off, fz.ignore_basic_report, tuya.fz.power_outage_memory, fz.tuya_relay_din_led_indicator],
+        toZigbee: [tz.on_off, tuya.tz.power_on_behavior_1, tz.tuya_relay_din_led_indicator],
+        configure: async (device, coordinatorEndpoint, logger) => {
+            const endpoint = device.getEndpoint(1);
+            await reporting.bind(endpoint, coordinatorEndpoint, ['genOnOff']);
+            device.save();
+        },
+        exposes: [e.switch(),
+            e.enum('power_outage_memory', ea.ALL, ['on', 'off', 'restore'])
+                .withDescription('Recover state after power outage'),
+            e.enum('indicator_mode', ea.STATE_SET, ['off', 'on_off', 'off_on'])
+                .withDescription('Relay LED indicator mode')],
+		whiteLabel: [{vendor: 'tongou', model: 'TO-Q-SY1-ZT'}],
+    },
+    {
         fingerprint: [{modelID: 'TS011F', manufacturerName: '_TZ3000_7issjl2q'}],
         model: 'ATMS1601Z',
         description: 'Din smart relay (without power monitoring)',
